@@ -58,7 +58,7 @@ export function useAuth() {
   const signUp = useCallback(
     async (email: string, password: string, name?: string): Promise<AuthResult> => {
       const e = normalizeAuthEmail(email);
-      const p = password.trim();
+      const p = password;
       if (!e || !p) return { ok: false, error: "Введите email и пароль" };
       const { data, error } = await supabase.auth.signUp({
         email: e,
@@ -118,7 +118,7 @@ export function useAuth() {
   const signIn = useCallback(
     async (email: string, password: string): Promise<AuthResult> => {
       const e = normalizeAuthEmail(email);
-      const p = password.trim();
+      const p = password;
       const { data, error } = await supabase.auth.signInWithPassword({
         email: e,
         password: p,
