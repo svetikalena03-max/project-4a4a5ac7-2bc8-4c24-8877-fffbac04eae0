@@ -69,7 +69,7 @@ function RegisterPage() {
       birthDate: birthDate || undefined,
       goal: "health",
     });
-    toast.success("Добро пожаловать!");
+    toast.success("Аккаунт создан");
     navigate({ to: "/home" });
   };
 
