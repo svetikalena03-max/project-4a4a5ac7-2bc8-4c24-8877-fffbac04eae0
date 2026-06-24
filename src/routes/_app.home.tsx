@@ -215,3 +215,12 @@ function StatCard({
     </Card>
   );
 }
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-lg bg-secondary/40 p-2 text-center">
+      <p className="truncate text-base font-bold text-foreground">{value}</p>
+      <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{label}</p>
+    </div>
+  );
+}
