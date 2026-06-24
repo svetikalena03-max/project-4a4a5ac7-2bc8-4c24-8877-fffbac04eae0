@@ -21,7 +21,6 @@ import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppHistoryRouteImport } from './routes/_app.history'
 import { Route as AppHealthFeaturesRouteImport } from './routes/_app.health-features'
 import { Route as AppHealthRouteImport } from './routes/_app.health'
-import { Route as AppHealthFeaturesRouteImport } from './routes/_app.health-features'
 import { Route as AppHabitsRouteImport } from './routes/_app.habits'
 import { Route as AppDiaryRouteImport } from './routes/_app.diary'
 import { Route as AppChartsRouteImport } from './routes/_app.charts'
@@ -88,11 +87,6 @@ const AppHealthRoute = AppHealthRouteImport.update({
   path: '/health',
   getParentRoute: () => AppRoute,
 } as any)
-const AppHealthFeaturesRoute = AppHealthFeaturesRouteImport.update({
-  id: '/health-features',
-  path: '/health-features',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppHabitsRoute = AppHabitsRouteImport.update({
   id: '/habits',
   path: '/habits',
@@ -135,7 +129,6 @@ export interface FileRoutesByFullPath {
   '/habits': typeof AppHabitsRoute
   '/health': typeof AppHealthRoute
   '/health-features': typeof AppHealthFeaturesRoute
-  '/health-features': typeof AppHealthFeaturesRoute
   '/history': typeof AppHistoryRouteWithChildren
   '/home': typeof AppHomeRoute
   '/profile': typeof AppProfileRoute
@@ -154,7 +147,6 @@ export interface FileRoutesByTo {
   '/diary': typeof AppDiaryRoute
   '/habits': typeof AppHabitsRoute
   '/health': typeof AppHealthRoute
-  '/health-features': typeof AppHealthFeaturesRoute
   '/health-features': typeof AppHealthFeaturesRoute
   '/history': typeof AppHistoryRouteWithChildren
   '/home': typeof AppHomeRoute
@@ -177,7 +169,6 @@ export interface FileRoutesById {
   '/_app/habits': typeof AppHabitsRoute
   '/_app/health': typeof AppHealthRoute
   '/_app/health-features': typeof AppHealthFeaturesRoute
-  '/_app/health-features': typeof AppHealthFeaturesRoute
   '/_app/history': typeof AppHistoryRouteWithChildren
   '/_app/home': typeof AppHomeRoute
   '/_app/profile': typeof AppProfileRoute
@@ -199,7 +190,6 @@ export interface FileRouteTypes {
     | '/habits'
     | '/health'
     | '/health-features'
-    | '/health-features'
     | '/history'
     | '/home'
     | '/profile'
@@ -218,7 +208,6 @@ export interface FileRouteTypes {
     | '/diary'
     | '/habits'
     | '/health'
-    | '/health-features'
     | '/health-features'
     | '/history'
     | '/home'
@@ -239,7 +228,6 @@ export interface FileRouteTypes {
     | '/_app/diary'
     | '/_app/habits'
     | '/_app/health'
-    | '/_app/health-features'
     | '/_app/health-features'
     | '/_app/history'
     | '/_app/home'
@@ -342,13 +330,6 @@ declare module '@tanstack/react-router' {
       path: '/health'
       fullPath: '/health'
       preLoaderRoute: typeof AppHealthRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/health-features': {
-      id: '/_app/health-features'
-      path: '/health-features'
-      fullPath: '/health-features'
-      preLoaderRoute: typeof AppHealthFeaturesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/habits': {
