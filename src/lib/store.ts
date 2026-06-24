@@ -36,6 +36,108 @@ export interface Habits {
   dailySteps?: number;
 }
 
+export const CHRONIC_OPTIONS = [
+  ["none", "Нет хронических заболеваний"],
+  ["gastritis", "Гастрит"],
+  ["pancreatitis", "Панкреатит"],
+  ["gerd", "ГЭРБ / изжога"],
+  ["diabetes", "Диабет"],
+  ["insulin_res", "Инсулинорезистентность"],
+  ["hypertension", "Гипертония"],
+  ["hypotension", "Пониженное давление"],
+  ["varicose", "Варикоз"],
+  ["edema", "Отёки"],
+  ["thyroid", "Заболевания щитовидной железы"],
+  ["heart", "Заболевания сердца"],
+  ["kidney", "Заболевания почек"],
+  ["liver", "Заболевания печени"],
+  ["anemia", "Анемия"],
+  ["migraine", "Мигрень"],
+  ["other", "Другое"],
+] as const;
+
+export const MUSCULO_OPTIONS = [
+  ["back", "Боль в спине"],
+  ["lowerback", "Боль в пояснице"],
+  ["neck", "Боль в шее"],
+  ["knees", "Боль в коленях"],
+  ["joints", "Боль в суставах"],
+  ["mobility", "Ограничение подвижности"],
+  ["trauma", "После травмы"],
+  ["other", "Другое"],
+] as const;
+
+export const GI_OPTIONS = [
+  ["bloating", "Вздутие"],
+  ["heartburn", "Изжога"],
+  ["heaviness", "Тяжесть после еды"],
+  ["constipation", "Запоры"],
+  ["diarrhea", "Диарея"],
+  ["lactose", "Непереносимость молочных продуктов"],
+  ["gluten", "Непереносимость глютена"],
+  ["allergy", "Аллергия на продукты"],
+] as const;
+
+export const WOMEN_OPTIONS = [
+  ["na", "Не актуально"],
+  ["regular", "Регулярный цикл"],
+  ["irregular", "Нерегулярный цикл"],
+  ["perimenopause", "Перименопауза"],
+  ["menopause", "Менопауза"],
+  ["pregnancy", "Беременность"],
+  ["postpartum", "После родов"],
+  ["skip", "Не хочу указывать"],
+] as const;
+
+export const TRAINING_OPTIONS = [
+  ["nojump", "Нельзя прыгать"],
+  ["norun", "Нельзя бегать"],
+  ["nostrength", "Нельзя силовые нагрузки"],
+  ["nobend", "Нельзя наклоны"],
+  ["nostand", "Нельзя долго стоять"],
+  ["soft", "Нужны мягкие тренировки"],
+  ["walkonly", "Только ходьба"],
+  ["lfk", "Только ЛФК"],
+  ["other", "Другое"],
+] as const;
+
+export interface HealthFeatures {
+  chronic?: string[];
+  chronicOther?: string;
+  musculo?: string[];
+  gi?: string[];
+  giIntolerances?: string;
+  women?: string[];
+  takesMeds?: boolean;
+  medsList?: string;
+  hasDoctorRec?: boolean;
+  doctorRec?: string;
+  training?: string[];
+  comment?: string;
+}
+
+export function summarizeHealthFeatures(hf?: HealthFeatures): string {
+  if (!hf) return "Не заполнено";
+  const labels: string[] = [];
+  const pick = (
+    arr: string[] | undefined,
+    src: ReadonlyArray<readonly [string, string]>,
+    skip: string[] = [],
+  ) => {
+    (arr ?? []).forEach((v) => {
+      if (skip.includes(v)) return;
+      const found = src.find(([k]) => k === v);
+      if (found) labels.push(found[1]);
+    });
+  };
+  pick(hf.chronic, CHRONIC_OPTIONS, ["none", "other"]);
+  pick(hf.musculo, MUSCULO_OPTIONS, ["other"]);
+  pick(hf.gi, GI_OPTIONS);
+  if (!labels.length) return "Не заполнено";
+  const first = labels.slice(0, 3).join(", ");
+  return labels.length > 3 ? `${first} +${labels.length - 3}` : first;
+}
+
 export interface Profile {
   name: string;
   age: number;
@@ -47,6 +149,7 @@ export interface Profile {
   birthDate?: string; // YYYY-MM-DD
   goal?: Goal;
   habits?: Habits;
+  healthFeatures?: HealthFeatures;
 }
 
 
