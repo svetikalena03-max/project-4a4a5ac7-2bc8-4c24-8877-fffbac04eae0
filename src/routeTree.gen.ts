@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppHistoryRouteImport } from './routes/_app.history'
 import { Route as AppDiaryRouteImport } from './routes/_app.diary'
+import { Route as AppHistoryDateRouteImport } from './routes/_app.history.$date'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -39,32 +40,40 @@ const AppDiaryRoute = AppDiaryRouteImport.update({
   path: '/diary',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHistoryDateRoute = AppHistoryDateRouteImport.update({
+  id: '/$date',
+  path: '/$date',
+  getParentRoute: () => AppHistoryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/diary': typeof AppDiaryRoute
-  '/history': typeof AppHistoryRoute
+  '/history': typeof AppHistoryRouteWithChildren
   '/home': typeof AppHomeRoute
+  '/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/diary': typeof AppDiaryRoute
-  '/history': typeof AppHistoryRoute
+  '/history': typeof AppHistoryRouteWithChildren
   '/home': typeof AppHomeRoute
+  '/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/diary': typeof AppDiaryRoute
-  '/_app/history': typeof AppHistoryRoute
+  '/_app/history': typeof AppHistoryRouteWithChildren
   '/_app/home': typeof AppHomeRoute
+  '/_app/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/diary' | '/history' | '/home'
+  fullPaths: '/' | '/diary' | '/history' | '/home' | '/history/$date'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/diary' | '/history' | '/home'
+  to: '/' | '/diary' | '/history' | '/home' | '/history/$date'
   id:
     | '__root__'
     | '/'
@@ -72,6 +81,7 @@ export interface FileRouteTypes {
     | '/_app/diary'
     | '/_app/history'
     | '/_app/home'
+    | '/_app/history/$date'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,18 +126,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiaryRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/history/$date': {
+      id: '/_app/history/$date'
+      path: '/$date'
+      fullPath: '/history/$date'
+      preLoaderRoute: typeof AppHistoryDateRouteImport
+      parentRoute: typeof AppHistoryRoute
+    }
   }
 }
 
+interface AppHistoryRouteChildren {
+  AppHistoryDateRoute: typeof AppHistoryDateRoute
+}
+
+const AppHistoryRouteChildren: AppHistoryRouteChildren = {
+  AppHistoryDateRoute: AppHistoryDateRoute,
+}
+
+const AppHistoryRouteWithChildren = AppHistoryRoute._addFileChildren(
+  AppHistoryRouteChildren,
+)
+
 interface AppRouteChildren {
   AppDiaryRoute: typeof AppDiaryRoute
-  AppHistoryRoute: typeof AppHistoryRoute
+  AppHistoryRoute: typeof AppHistoryRouteWithChildren
   AppHomeRoute: typeof AppHomeRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDiaryRoute: AppDiaryRoute,
-  AppHistoryRoute: AppHistoryRoute,
+  AppHistoryRoute: AppHistoryRouteWithChildren,
   AppHomeRoute: AppHomeRoute,
 }
 
