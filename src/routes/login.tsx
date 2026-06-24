@@ -29,9 +29,9 @@ function LoginPage() {
     if (ready && user) navigate({ to: "/home" });
   }, [ready, user, navigate]);
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    const res = signIn(email, password);
+    const res = await signIn(email, password);
     if (!res.ok) {
       toast.error(res.error ?? "Неверный email или пароль");
       return;
