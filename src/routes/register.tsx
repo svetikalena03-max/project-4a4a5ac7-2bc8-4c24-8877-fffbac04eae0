@@ -100,7 +100,26 @@ function RegisterPage() {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="pass">Пароль</Label>
-              <Input id="pass" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+              <div className="relative">
+                <Input
+                  id="pass"
+                  type={show ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow((s) => !s)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:text-foreground"
+                  aria-label={show ? "Скрыть пароль" : "Показать пароль"}
+                >
+                  {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex min-w-0 flex-col gap-2">
