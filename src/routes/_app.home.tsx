@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Droplet, Moon, Smile, Activity, TrendingDown, Plus, Heart, HeartPulse, Zap, Wheat, Mic, Footprints } from "lucide-react";
+import { Droplet, Moon, Smile, Activity, TrendingDown, Plus, Heart, HeartPulse, Zap, Wheat, Mic, Footprints, Coffee, Utensils } from "lucide-react";
 import { useEntries, useProfile, todayISO, formatDateWeekday } from "@/lib/store";
 import { toast } from "sonner";
 
@@ -28,6 +28,8 @@ function HomePage() {
   const wellbeing = todayEntry?.wellbeing ?? lastWith("wellbeing")?.wellbeing ?? "—";
   const breadUnits = todayEntry?.breadUnits ?? 0;
   const steps = todayEntry?.steps ?? lastWith("steps")?.steps;
+  const mealsCount = todayEntry?.meals?.filter((m) => (m.food && m.food.trim()) || (m.portion && m.portion.trim())).length ?? 0;
+  const coffee = todayEntry?.coffee ?? 0;
 
   const lastBP = todayEntry?.systolic ? todayEntry : lastWith("systolic");
   const pulse = todayEntry?.pulse ?? lastWith("pulse")?.pulse;
@@ -76,6 +78,19 @@ function HomePage() {
           <span className="block text-xs font-normal opacity-90">Скоро: голосовой дневник</span>
         </span>
       </Button>
+
+      <Card className="p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <Utensils className="h-4 w-4 text-primary" />
+          <p className="text-sm font-semibold text-foreground">Питание сегодня</p>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          <MiniStat label="Приёмов" value={`${mealsCount}`} />
+          <MiniStat label="Вода" value={`${(water / 1000).toFixed(1)} л`} />
+          <MiniStat label="Кофе" value={`${coffee} мл`} />
+          <MiniStat label="Хлебцы" value={`${breadUnits}`} />
+        </div>
+      </Card>
 
       <div className="grid grid-cols-2 gap-3">
         <StatCard
@@ -198,5 +213,14 @@ function StatCard({
       </div>
       {progress !== undefined && <Progress value={progress} className="h-1.5" />}
     </Card>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-lg bg-secondary/40 p-2 text-center">
+      <p className="truncate text-base font-bold text-foreground">{value}</p>
+      <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{label}</p>
+    </div>
   );
 }

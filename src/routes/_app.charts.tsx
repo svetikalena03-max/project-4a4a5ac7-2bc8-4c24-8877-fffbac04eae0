@@ -20,6 +20,8 @@ function ChartsPage() {
     pulse: e.pulse ?? null,
     energy: e.energy ?? null,
     bread: e.breadUnits ?? null,
+    coffee: e.coffee ?? null,
+    sweet: ((e.soda ?? 0) + (e.juice ?? 0)) || null,
   }));
 
   if (entries.length === 0) {
@@ -108,6 +110,26 @@ function ChartsPage() {
           <YAxis tick={axisStyle} stroke="var(--muted-foreground)" />
           <Tooltip contentStyle={tooltip} />
           <Bar dataKey="bread" fill="var(--chart-4)" radius={[8, 8, 0, 0]} />
+        </BarChart>
+      </ChartCard>
+
+      <ChartCard title="Кофе, мл">
+        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+          <XAxis dataKey="date" tick={axisStyle} stroke="var(--muted-foreground)" />
+          <YAxis tick={axisStyle} stroke="var(--muted-foreground)" />
+          <Tooltip contentStyle={tooltip} />
+          <Bar dataKey="coffee" fill="var(--chart-1)" radius={[8, 8, 0, 0]} />
+        </BarChart>
+      </ChartCard>
+
+      <ChartCard title="Сладкие напитки (сок + газировка), мл">
+        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+          <XAxis dataKey="date" tick={axisStyle} stroke="var(--muted-foreground)" />
+          <YAxis tick={axisStyle} stroke="var(--muted-foreground)" />
+          <Tooltip contentStyle={tooltip} />
+          <Bar dataKey="sweet" fill="var(--chart-3)" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ChartCard>
     </div>
