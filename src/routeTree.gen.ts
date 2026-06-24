@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppHistoryRouteImport } from './routes/_app.history'
 import { Route as AppDiaryRouteImport } from './routes/_app.diary'
@@ -25,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppHomeRoute = AppHomeRouteImport.update({
   id: '/home',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/diary': typeof AppDiaryRoute
   '/history': typeof AppHistoryRouteWithChildren
   '/home': typeof AppHomeRoute
+  '/profile': typeof AppProfileRoute
   '/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRoutesByTo {
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/diary': typeof AppDiaryRoute
   '/history': typeof AppHistoryRouteWithChildren
   '/home': typeof AppHomeRoute
+  '/profile': typeof AppProfileRoute
   '/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRoutesById {
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/_app/diary': typeof AppDiaryRoute
   '/_app/history': typeof AppHistoryRouteWithChildren
   '/_app/home': typeof AppHomeRoute
+  '/_app/profile': typeof AppProfileRoute
   '/_app/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRouteTypes {
@@ -86,9 +95,17 @@ export interface FileRouteTypes {
     | '/diary'
     | '/history'
     | '/home'
+    | '/profile'
     | '/history/$date'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/charts' | '/diary' | '/history' | '/home' | '/history/$date'
+  to:
+    | '/'
+    | '/charts'
+    | '/diary'
+    | '/history'
+    | '/home'
+    | '/profile'
+    | '/history/$date'
   id:
     | '__root__'
     | '/'
@@ -97,6 +114,7 @@ export interface FileRouteTypes {
     | '/_app/diary'
     | '/_app/history'
     | '/_app/home'
+    | '/_app/profile'
     | '/_app/history/$date'
   fileRoutesById: FileRoutesById
 }
@@ -120,6 +138,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/home': {
       id: '/_app/home'
@@ -176,6 +201,7 @@ interface AppRouteChildren {
   AppDiaryRoute: typeof AppDiaryRoute
   AppHistoryRoute: typeof AppHistoryRouteWithChildren
   AppHomeRoute: typeof AppHomeRoute
+  AppProfileRoute: typeof AppProfileRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -183,6 +209,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDiaryRoute: AppDiaryRoute,
   AppHistoryRoute: AppHistoryRouteWithChildren,
   AppHomeRoute: AppHomeRoute,
+  AppProfileRoute: AppProfileRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
