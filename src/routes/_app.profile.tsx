@@ -51,6 +51,7 @@ function ProfilePage() {
     if (!confirm("Сбросить все данные?")) return;
     localStorage.removeItem("hg_profile");
     localStorage.removeItem("hg_entries");
+    localStorage.removeItem("hg_entries_v2");
     window.dispatchEvent(new CustomEvent("hg-storage"));
     navigate({ to: "/" });
   };
