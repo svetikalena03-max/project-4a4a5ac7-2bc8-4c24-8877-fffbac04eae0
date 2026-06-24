@@ -9,38 +9,129 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppProfileRouteImport } from './routes/_app.profile'
+import { Route as AppHomeRouteImport } from './routes/_app.home'
+import { Route as AppHistoryRouteImport } from './routes/_app.history'
+import { Route as AppDiaryRouteImport } from './routes/_app.diary'
+import { Route as AppChartsRouteImport } from './routes/_app.charts'
+import { Route as AppHistoryDateRouteImport } from './routes/_app.history.$date'
 
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHomeRoute = AppHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHistoryRoute = AppHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDiaryRoute = AppDiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChartsRoute = AppChartsRouteImport.update({
+  id: '/charts',
+  path: '/charts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHistoryDateRoute = AppHistoryDateRouteImport.update({
+  id: '/$date',
+  path: '/$date',
+  getParentRoute: () => AppHistoryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/charts': typeof AppChartsRoute
+  '/diary': typeof AppDiaryRoute
+  '/history': typeof AppHistoryRouteWithChildren
+  '/home': typeof AppHomeRoute
+  '/profile': typeof AppProfileRoute
+  '/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/charts': typeof AppChartsRoute
+  '/diary': typeof AppDiaryRoute
+  '/history': typeof AppHistoryRouteWithChildren
+  '/home': typeof AppHomeRoute
+  '/profile': typeof AppProfileRoute
+  '/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/charts': typeof AppChartsRoute
+  '/_app/diary': typeof AppDiaryRoute
+  '/_app/history': typeof AppHistoryRouteWithChildren
+  '/_app/home': typeof AppHomeRoute
+  '/_app/profile': typeof AppProfileRoute
+  '/_app/history/$date': typeof AppHistoryDateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/charts'
+    | '/diary'
+    | '/history'
+    | '/home'
+    | '/profile'
+    | '/history/$date'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/charts'
+    | '/diary'
+    | '/history'
+    | '/home'
+    | '/profile'
+    | '/history/$date'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/charts'
+    | '/_app/diary'
+    | '/_app/history'
+    | '/_app/home'
+    | '/_app/profile'
+    | '/_app/history/$date'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +139,85 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/home': {
+      id: '/_app/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AppHomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/history': {
+      id: '/_app/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof AppHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/diary': {
+      id: '/_app/diary'
+      path: '/diary'
+      fullPath: '/diary'
+      preLoaderRoute: typeof AppDiaryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/charts': {
+      id: '/_app/charts'
+      path: '/charts'
+      fullPath: '/charts'
+      preLoaderRoute: typeof AppChartsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/history/$date': {
+      id: '/_app/history/$date'
+      path: '/$date'
+      fullPath: '/history/$date'
+      preLoaderRoute: typeof AppHistoryDateRouteImport
+      parentRoute: typeof AppHistoryRoute
+    }
   }
 }
 
+interface AppHistoryRouteChildren {
+  AppHistoryDateRoute: typeof AppHistoryDateRoute
+}
+
+const AppHistoryRouteChildren: AppHistoryRouteChildren = {
+  AppHistoryDateRoute: AppHistoryDateRoute,
+}
+
+const AppHistoryRouteWithChildren = AppHistoryRoute._addFileChildren(
+  AppHistoryRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppChartsRoute: typeof AppChartsRoute
+  AppDiaryRoute: typeof AppDiaryRoute
+  AppHistoryRoute: typeof AppHistoryRouteWithChildren
+  AppHomeRoute: typeof AppHomeRoute
+  AppProfileRoute: typeof AppProfileRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppChartsRoute: AppChartsRoute,
+  AppDiaryRoute: AppDiaryRoute,
+  AppHistoryRoute: AppHistoryRouteWithChildren,
+  AppHomeRoute: AppHomeRoute,
+  AppProfileRoute: AppProfileRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
