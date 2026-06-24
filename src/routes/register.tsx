@@ -70,6 +70,17 @@ function RegisterPage() {
       birthDate: birthDate || undefined,
       goal: "health",
     });
+    const { data: sess } = await supabase.auth.getUser();
+    if (sess.user) {
+      await supabase.from("legal_consents").insert({
+        user_id: sess.user.id,
+        privacy_policy_accepted: agreeData,
+        personal_data_accepted: agreeData,
+        user_agreement_accepted: agreeTerms,
+        medical_disclaimer_accepted: agreeMedical,
+        document_version: "v1",
+      });
+    }
     toast.success("Аккаунт создан");
     navigate({ to: "/home" });
   };
