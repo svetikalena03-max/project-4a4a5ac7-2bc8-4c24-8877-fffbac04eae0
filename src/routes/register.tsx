@@ -29,6 +29,7 @@ function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [birthDate, setBirthDate] = useState("");
   const [gender, setGender] = useState<Gender>("female");
   const [height, setHeight] = useState("");
