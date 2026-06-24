@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_app/profile")({
 
 function ProfilePage() {
   const { profile, setProfile } = useProfile();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
