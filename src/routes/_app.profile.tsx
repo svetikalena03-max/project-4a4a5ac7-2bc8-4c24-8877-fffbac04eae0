@@ -126,6 +126,21 @@ function ProfilePage() {
         </form>
       </Card>
 
+      <Link to="/habits" className="block">
+        <Card className="flex items-center gap-3 p-4 transition-colors hover:bg-accent/40">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Heart className="h-5 w-5" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">Мои привычки</p>
+            <p className="text-xs text-muted-foreground">Курение, алкоголь, кофе, стресс, экранное время</p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Card>
+      </Link>
+
+
+
       <Card className="p-4">
         <p className="mb-3 text-sm font-semibold text-foreground">Скоро в приложении</p>
         <ul className="grid gap-2 text-sm text-muted-foreground">
