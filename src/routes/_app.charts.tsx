@@ -20,6 +20,8 @@ function ChartsPage() {
     pulse: e.pulse ?? null,
     energy: e.energy ?? null,
     bread: e.breadUnits ?? null,
+    coffee: e.coffee ?? null,
+    sweet: ((e.soda ?? 0) + (e.juice ?? 0)) || null,
   }));
 
   if (entries.length === 0) {
