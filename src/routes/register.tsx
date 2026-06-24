@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeft, Sparkles, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useProfile, type Gender } from "@/lib/store";
+import { DEFAULT_PROFILE, ensureCurrentUserProfile, type Gender } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -24,7 +25,6 @@ export const Route = createFileRoute("/register")({
 
 function RegisterPage() {
   const { user, ready, signUp } = useAuth();
-  const { setProfile } = useProfile();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -40,6 +40,7 @@ function RegisterPage() {
   const [agreeData, setAgreeData] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreeMedical, setAgreeMedical] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   useEffect(() => {
     if (ready && user) navigate({ to: "/home" });
@@ -47,19 +48,23 @@ function RegisterPage() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setServerError(null);
     if (!agreeData || !agreeTerms || !agreeMedical) {
       toast.error("Подтвердите все обязательные согласия");
       return;
     }
     const res = await signUp(email, password, name.trim() || undefined);
     if (!res.ok) {
-      toast.error(res.error ?? "Не удалось зарегистрироваться");
+      const message = res.error ?? "Ошибка регистрации";
+      setServerError(message);
+      toast.error(message);
       return;
     }
     const age = birthDate
       ? Math.max(1, Math.floor((Date.now() - new Date(birthDate).getTime()) / (365.25 * 24 * 3600 * 1000)))
       : 30;
-    await setProfile({
+    const profileRes = await ensureCurrentUserProfile({
+      ...DEFAULT_PROFILE,
       name: name.trim() || "Друг",
       age,
       gender,
@@ -70,9 +75,15 @@ function RegisterPage() {
       birthDate: birthDate || undefined,
       goal: "health",
     });
+    if (!profileRes.ok) {
+      const message = profileRes.error ?? "Профиль не создан";
+      setServerError(message);
+      toast.error(message);
+      return;
+    }
     const { data: sess } = await supabase.auth.getUser();
     if (sess.user) {
-      await supabase.from("legal_consents").insert({
+      const { error: consentError } = await supabase.from("legal_consents").insert({
         user_id: sess.user.id,
         privacy_policy_accepted: agreeData,
         personal_data_accepted: agreeData,
@@ -80,6 +91,17 @@ function RegisterPage() {
         medical_disclaimer_accepted: agreeMedical,
         document_version: "v1",
       });
+      if (consentError) {
+        console.error("Supabase legal_consents insert error", {
+          message: consentError.message,
+          code: consentError.code,
+          details: consentError.details,
+          hint: consentError.hint,
+        });
+        setServerError(consentError.message);
+        toast.error(consentError.message);
+        return;
+      }
     }
     toast.success("Аккаунт создан");
     navigate({ to: "/home" });
@@ -102,6 +124,12 @@ function RegisterPage() {
 
         <Card className="p-5">
           <form onSubmit={submit} className="flex flex-col gap-4">
+            {serverError && (
+              <Alert variant="destructive">
+                <AlertTitle>Ошибка Auth</AlertTitle>
+                <AlertDescription>{serverError}</AlertDescription>
+              </Alert>
+            )}
             <div className="flex flex-col gap-2">
               <Label htmlFor="name">Имя</Label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Анна" />
