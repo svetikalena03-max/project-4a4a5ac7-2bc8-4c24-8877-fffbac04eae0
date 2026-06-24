@@ -52,9 +52,44 @@ function HistoryDetail() {
             </Card>
           )}
 
+          {entry.meals && entry.meals.length > 0 && (
+            <Card className="p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Приёмы пищи</p>
+              <div className="mt-3 flex flex-col gap-3">
+                {entry.meals.map((m) => (
+                  <div key={m.id} className="rounded-lg border border-border p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate text-sm font-semibold text-foreground">{MEAL_LABELS[m.type]}</p>
+                      {m.time && <span className="text-xs text-muted-foreground">{m.time}</span>}
+                    </div>
+                    {m.food && <p className="mt-1 whitespace-pre-wrap break-words text-sm text-foreground">{m.food}</p>}
+                    {m.portion && <p className="mt-1 text-xs text-muted-foreground">Порция: {m.portion}</p>}
+                    {m.comment && <p className="mt-1 text-xs text-muted-foreground">{m.comment}</p>}
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {(entry.water || entry.tea || entry.coffee || entry.soda || entry.juice || entry.otherDrinks || entry.sugar || entry.milk) && (
+            <Card className="p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Напитки</p>
+              <div className="mt-2 flex flex-wrap gap-2 text-sm">
+                {entry.water != null && <Tag>Вода: {entry.water} мл</Tag>}
+                {entry.tea != null && <Tag>Чай: {entry.tea} мл</Tag>}
+                {entry.coffee != null && <Tag>Кофе: {entry.coffee} мл</Tag>}
+                {entry.soda != null && <Tag>Газировка: {entry.soda} мл</Tag>}
+                {entry.juice != null && <Tag>Сок: {entry.juice} мл</Tag>}
+                {entry.sugar && <Tag>Сахар: {entry.sugar === "other" ? entry.sugarOther || "другое" : SUGAR_LABELS[entry.sugar]}</Tag>}
+                {entry.milk && <Tag>Молоко/сливки</Tag>}
+                {entry.otherDrinks && <Tag>Другое: {entry.otherDrinks}</Tag>}
+              </div>
+            </Card>
+          )}
+
           {entry.workout && <Section title="Тренировка" body={entry.workout} />}
-          {entry.food && <Section title="Питание" body={entry.food} />}
-          {entry.drinks && <Section title="Напитки" body={entry.drinks} />}
+          {entry.food && <Section title="Питание (старый формат)" body={entry.food} />}
+          {entry.drinks && <Section title="Напитки (старый формат)" body={entry.drinks} />}
           {entry.wellbeing && <Section title="Самочувствие" body={entry.wellbeing} />}
           {entry.healthComment && <Section title="Комментарий к здоровью" body={entry.healthComment} />}
         </div>
