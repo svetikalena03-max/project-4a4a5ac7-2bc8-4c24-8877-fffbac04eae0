@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeft, Sparkles, Eye, EyeOff } from "lucide-react";
 import { normalizeAuthEmail, useAuth } from "@/lib/auth";
-import { checkAuthDebugUser, resetDebugUser } from "@/lib/auth-debug.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
@@ -24,38 +22,17 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { user, ready, signIn } = useAuth();
   const navigate = useNavigate();
-  const checkDebugUser = useServerFn(checkAuthDebugUser);
-  const resetTestUser = useServerFn(resetDebugUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [lastAuthError, setLastAuthError] = useState<string>("");
-  const [debugRegistered, setDebugRegistered] = useState<string>("не проверено");
   const [submitting, setSubmitting] = useState(false);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (ready && user) navigate({ to: "/home" });
   }, [ready, user, navigate]);
-
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    const normalized = normalizeAuthEmail(email);
-    if (!normalized) {
-      setDebugRegistered("не проверено");
-      return;
-    }
-    const timer = window.setTimeout(async () => {
-      try {
-        const res = await checkDebugUser({ data: { email: normalized } });
-        setDebugRegistered(res.registered ? "да" : "нет");
-      } catch (err) {
-        setDebugRegistered(err instanceof Error ? err.message : "ошибка проверки");
-      }
-    }, 350);
-    return () => window.clearTimeout(timer);
-  }, [email, checkDebugUser]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -71,7 +48,7 @@ function LoginPage() {
     setSubmitting(true);
     try {
       const timeout = new Promise<{ ok: false; error: string; timedOut: true }>((resolve) =>
-        setTimeout(() => resolve({ ok: false, error: "Превышено время ожидания ответа. Попробуйте ещё раз.", timedOut: true }), 15000),
+        setTimeout(() => resolve({ ok: false, error: "Ответ сервера не получен. Кнопка разблокирована — попробуйте ещё раз.", timedOut: true }), 8000),
       );
       const res = await Promise.race([signIn(normalizedEmail, formPassword), timeout]);
       if (!res.ok) {
@@ -99,21 +76,6 @@ function LoginPage() {
       if (passwordRef.current) passwordRef.current.type = next ? "text" : "password";
       return next;
     });
-  };
-
-  const resetAccount = async () => {
-    const normalizedEmail = normalizeAuthEmail(email);
-    if (!normalizedEmail) {
-      toast.error("Введите email тестового аккаунта");
-      return;
-    }
-    await resetTestUser({ data: { email: normalizedEmail } });
-    setEmail(normalizedEmail);
-    setPassword("");
-    setDebugRegistered("нет");
-    setServerError(null);
-    setLastAuthError("");
-    toast.success("Тестовый аккаунт сброшен");
   };
 
   return (
@@ -170,15 +132,10 @@ function LoginPage() {
                 />
                 <button
                   type="button"
-                  tabIndex={-1}
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    togglePassword();
-                  }}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
+                    togglePassword();
                   }}
                   className="absolute right-1 top-1/2 z-10 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-md bg-background/60 text-muted-foreground hover:bg-accent hover:text-foreground"
                   aria-label={show ? "Скрыть пароль" : "Показать пароль"}
@@ -192,17 +149,10 @@ function LoginPage() {
               {submitting ? "Входим..." : "Войти"}
             </Button>
             {import.meta.env.DEV && (
-              <>
-                <Button type="button" variant="outline" onClick={resetAccount} disabled={submitting}>
-                  Сбросить тестовый аккаунт
-                </Button>
-                <Card className="p-3 text-xs text-muted-foreground">
-                  <p>Текущий email: {normalizeAuthEmail(email) || "—"}</p>
-                  <p>Зарегистрирован: {debugRegistered}</p>
-                  <p>Статус авторизации: {ready ? (user ? "вошёл" : "не вошёл") : "проверка"}</p>
-                  <p>Последняя ошибка Auth: {lastAuthError || "—"}</p>
-                </Card>
-              </>
+              <Card className="p-3 text-xs text-muted-foreground">
+                <p>Статус авторизации: {ready ? (user ? "вошёл" : "не вошёл") : "проверка"}</p>
+                <p>Последняя ошибка Auth: {lastAuthError || "—"}</p>
+              </Card>
             )}
             <p className="text-center text-sm text-muted-foreground">
               Нет аккаунта?{" "}
