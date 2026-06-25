@@ -121,8 +121,14 @@ function LoginPage() {
           <form onSubmit={submit} noValidate className="flex flex-col gap-4">
             {serverError && (
               <Alert variant="destructive">
-                <AlertTitle>Ошибка Auth</AlertTitle>
-                <AlertDescription>{serverError}</AlertDescription>
+                <AlertTitle>Ошибка входа</AlertTitle>
+                <AlertDescription className="flex flex-col gap-2">
+                  <span>{serverError}</span>
+                  <div className="flex flex-wrap gap-3 text-xs">
+                    <Link to="/forgot-password" className="underline">Восстановить пароль</Link>
+                    <Link to="/register" className="underline">Создать аккаунт</Link>
+                  </div>
+                </AlertDescription>
               </Alert>
             )}
             <div className="flex flex-col gap-2">
@@ -144,15 +150,22 @@ function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pr-10"
+                  className="pr-12"
                 />
                 <button
                   type="button"
-                  onClick={() => setShow((s) => !s)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShow((s) => !s);
+                  }}
+                  className="absolute right-1 top-1/2 z-10 -translate-y-1/2 grid h-9 w-9 place-items-center rounded-md bg-background/60 text-muted-foreground hover:bg-accent hover:text-foreground"
                   aria-label={show ? "Скрыть пароль" : "Показать пароль"}
+                  title={show ? "Скрыть пароль" : "Показать пароль"}
                 >
-                  {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
