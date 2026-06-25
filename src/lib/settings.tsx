@@ -110,7 +110,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     applyLang(l);
   }, []);
 
-  // sync from profile on auth
+  // Load saved settings once. Do not query the backend from onAuthStateChange:
+  // supabase-js can deadlock auth promises when subscribers start extra API calls.
   useEffect(() => {
     const sync = async (uid: string | undefined) => {
       if (!uid) return;
@@ -129,12 +130,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data }) => {
       void sync(data.session?.user.id);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      window.setTimeout(() => {
-        void sync(session?.user.id);
-      }, 0);
-    });
-    return () => sub.subscription.unsubscribe();
   }, []);
 
   const persist = async (patch: { theme?: Theme; language?: Lang }) => {
