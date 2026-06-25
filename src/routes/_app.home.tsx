@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Droplet, Moon, Smile, Activity, TrendingDown, Plus, Heart, HeartPulse, Zap, Wheat, Mic, Footprints, Coffee, Utensils } from "lucide-react";
+import { Droplet, Moon, Smile, Activity, TrendingDown, Plus, Heart, HeartPulse, Mic, GlassWater } from "lucide-react";
 import { useEntries, useProfile, todayISO, formatDateWeekday } from "@/lib/store";
 import { toast } from "sonner";
 
@@ -26,14 +26,14 @@ function HomePage() {
   const sleep = todayEntry?.sleep ?? lastWith("sleep")?.sleep ?? 0;
   const mood = todayEntry?.mood ?? lastWith("mood")?.mood ?? 0;
   const wellbeing = todayEntry?.wellbeing ?? lastWith("wellbeing")?.wellbeing ?? "—";
-  const breadUnits = todayEntry?.breadUnits ?? 0;
-  const steps = todayEntry?.steps ?? lastWith("steps")?.steps;
-  const mealsCount = todayEntry?.meals?.filter((m) => (m.food && m.food.trim()) || (m.portion && m.portion.trim())).length ?? 0;
-  const coffee = todayEntry?.coffee ?? 0;
+
+  const otherDrinks =
+    (todayEntry?.tea ?? 0) +
+    (todayEntry?.coffee ?? 0) +
+    (todayEntry?.soda ?? 0) +
+    (todayEntry?.juice ?? 0);
 
   const lastBP = todayEntry?.systolic ? todayEntry : lastWith("systolic");
-  const pulse = todayEntry?.pulse ?? lastWith("pulse")?.pulse;
-  const energy = todayEntry?.energy ?? lastWith("energy")?.energy;
 
   const weightDelta = profile ? (Number(weight) - profile.currentWeight).toFixed(1) : "0";
 
@@ -79,19 +79,6 @@ function HomePage() {
         </span>
       </Button>
 
-      <Card className="p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <Utensils className="h-4 w-4 text-primary" />
-          <p className="text-sm font-semibold text-foreground">Питание сегодня</p>
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          <MiniStat label="Приёмов" value={`${mealsCount}`} />
-          <MiniStat label="Вода" value={`${(water / 1000).toFixed(1)} л`} />
-          <MiniStat label="Кофе" value={`${coffee} мл`} />
-          <MiniStat label="Хлебцы" value={`${breadUnits}`} />
-        </div>
-      </Card>
-
       <div className="grid grid-cols-2 gap-3">
         <StatCard
           icon={<Droplet className="h-5 w-5" />}
@@ -102,12 +89,26 @@ function HomePage() {
           tint="bg-chart-2/15 text-chart-2"
         />
         <StatCard
+          icon={<GlassWater className="h-5 w-5" />}
+          label="Другие напитки"
+          value={`${(otherDrinks / 1000).toFixed(1)} л`}
+          hint="чай, кофе, сок и др."
+          tint="bg-chart-4/15 text-chart-4"
+        />
+        <StatCard
           icon={<Moon className="h-5 w-5" />}
           label="Сон"
           value={`${Number(sleep).toFixed(1)} ч`}
           hint="Норма: 7–9 ч"
           progress={Math.min(100, (Number(sleep) / 8) * 100)}
           tint="bg-chart-5/15 text-chart-5"
+        />
+        <StatCard
+          icon={<Heart className="h-5 w-5" />}
+          label="Давление"
+          value={lastBP?.systolic ? `${lastBP.systolic}/${lastBP.diastolic ?? "—"}` : "—"}
+          hint="мм рт.ст."
+          tint="bg-chart-1/15 text-chart-1"
         />
         <StatCard
           icon={<Smile className="h-5 w-5" />}
@@ -123,52 +124,6 @@ function HomePage() {
           value={wellbeing && wellbeing.length > 14 ? wellbeing.slice(0, 14) + "…" : wellbeing || "—"}
           hint="Краткая отметка"
           tint="bg-chart-4/15 text-chart-4"
-        />
-      </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        <StatCard
-          icon={<Heart className="h-4 w-4" />}
-          label="Давление"
-          value={lastBP?.systolic ? `${lastBP.systolic}/${lastBP.diastolic ?? "—"}` : "—"}
-          hint="мм рт.ст."
-          tint="bg-chart-1/15 text-chart-1"
-          compact
-        />
-        <StatCard
-          icon={<HeartPulse className="h-4 w-4" />}
-          label="Пульс"
-          value={pulse ? `${pulse}` : "—"}
-          hint="уд/мин"
-          tint="bg-chart-2/15 text-chart-2"
-          compact
-        />
-        <StatCard
-          icon={<Zap className="h-4 w-4" />}
-          label="Энергия"
-          value={energy ? `${energy}/10` : "—"}
-          hint="уровень"
-          tint="bg-chart-3/15 text-chart-3"
-          compact
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard
-          icon={<Wheat className="h-4 w-4" />}
-          label="Хлебцы"
-          value={`${breadUnits} шт`}
-          hint="за сегодня"
-          tint="bg-chart-4/15 text-chart-4"
-          compact
-        />
-        <StatCard
-          icon={<Footprints className="h-4 w-4" />}
-          label="Шаги"
-          value={steps ? `${steps}` : "—"}
-          hint="за день"
-          tint="bg-chart-5/15 text-chart-5"
-          compact
         />
       </div>
 
@@ -191,7 +146,7 @@ function HomePage() {
 }
 
 function StatCard({
-  icon, label, value, hint, progress, tint, compact,
+  icon, label, value, hint, progress, tint,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -199,7 +154,6 @@ function StatCard({
   hint: string;
   progress?: number;
   tint: string;
-  compact?: boolean;
 }) {
   return (
     <Card className="flex min-w-0 flex-col gap-2 p-3">
@@ -208,19 +162,10 @@ function StatCard({
         <span className="truncate text-xs font-medium text-muted-foreground">{label}</span>
       </div>
       <div className="min-w-0">
-        <p className={`truncate font-bold text-foreground ${compact ? "text-base" : "text-2xl"}`}>{value}</p>
+        <p className="truncate text-2xl font-bold text-foreground">{value}</p>
         <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{hint}</p>
       </div>
       {progress !== undefined && <Progress value={progress} className="h-1.5" />}
     </Card>
-  );
-}
-
-function MiniStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0 rounded-lg bg-secondary/40 p-2 text-center">
-      <p className="truncate text-base font-bold text-foreground">{value}</p>
-      <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{label}</p>
-    </div>
   );
 }
