@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { useProfile, type Gender, type Goal, GOAL_LABELS, summarizeHealthFeatures } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
-import { LogOut, ChevronRight, Heart, HeartPulse } from "lucide-react";
+import { LogOut, ChevronRight, Heart, HeartPulse, Settings as SettingsIcon } from "lucide-react";
 
 
 export const Route = createFileRoute("/_app/profile")({
@@ -157,6 +157,19 @@ function ProfilePage() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground">Мои привычки</p>
             <p className="text-xs text-muted-foreground">Курение, алкоголь, кофе, стресс, экранное время</p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Card>
+      </Link>
+
+      <Link to="/settings" className="block">
+        <Card className="flex items-center gap-3 p-4 transition-colors hover:bg-accent/40">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+            <SettingsIcon className="h-5 w-5" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">Настройки приложения</p>
+            <p className="text-xs text-muted-foreground">Тема, язык, отображение</p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </Card>

@@ -337,8 +337,10 @@ export type Database = {
           goal: string | null
           height: number | null
           id: string
+          language: string | null
           name: string | null
           target_weight: number | null
+          theme: string | null
           updated_at: string
           user_id: string
           water_goal: number | null
@@ -353,8 +355,10 @@ export type Database = {
           goal?: string | null
           height?: number | null
           id?: string
+          language?: string | null
           name?: string | null
           target_weight?: number | null
+          theme?: string | null
           updated_at?: string
           user_id: string
           water_goal?: number | null
@@ -369,8 +373,10 @@ export type Database = {
           goal?: string | null
           height?: number | null
           id?: string
+          language?: string | null
           name?: string | null
           target_weight?: number | null
+          theme?: string | null
           updated_at?: string
           user_id?: string
           water_goal?: number | null
