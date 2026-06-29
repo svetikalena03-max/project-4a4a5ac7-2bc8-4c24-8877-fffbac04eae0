@@ -48,6 +48,18 @@ function HomePage() {
         </h1>
       </header>
 
+      <Link to="/recovery" className="block">
+        <Card className="flex items-center gap-3 border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-sky-500/10 p-4 transition-all hover:shadow-md hover:-translate-y-0.5">
+          <div className="text-2xl">🌿</div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-foreground">Восстановление</p>
+            <p className="text-xs text-muted-foreground">Расслабление, дыхание, медитация</p>
+          </div>
+        </Card>
+      </Link>
+
+
+
       <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary to-primary/70 p-6 text-primary-foreground shadow-lg">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
